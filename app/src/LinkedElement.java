@@ -7,8 +7,8 @@ public class LinkedElement {
     private Element elem;
     private String attrName;
 
-    public LinkedElement(String uri, String attrName, Element elem) {
-        this.uri = uri;
+    public LinkedElement(String attrName, Element elem) {
+        this.uri = elem.attr(attrName);
         this.attrName = attrName;
         this.elem = elem;
     }

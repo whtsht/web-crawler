@@ -1,8 +1,8 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -26,11 +26,13 @@ public class HTMLUtil {
         return Optional.empty();
     }
 
-    public static List<LinkedElement> extractSrc(Document doc) {
-        return null;
+    public static Stream<LinkedElement> extractSrc(Document doc) {
+        var sources = doc.select("[src]");
+        return sources.stream().map(source -> new LinkedElement("src", source));
     }
 
-    public static List<LinkedElement> extractHref(Document doc) {
-        return null;
+    public static Stream<LinkedElement> extractHref(Document doc) {
+        var links = doc.select("[href]");
+        return links.stream().map(link -> new LinkedElement("href", link));
     }
 }

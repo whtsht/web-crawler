@@ -1,4 +1,4 @@
- Phase 1 downloadContent stream uri -> stream doc
+ Phase 1 downloadContent stream uri -> list doc
  [URI] =>
  if uri is content
  - saveFile(content)
@@ -7,7 +7,7 @@
  Phase 2 extractLinkedElement stream doc -> stream LinkedElemtnt
  [Document] -> [LinkedElemtnt]
 
- Phase 3 rewriteLinkedElement stream -> LinkedElemtnt -> stream uri
+ Phase 3 rewriteLinkedElement stream LinkedElemtnt -> stream uri
  [LinkedElemtnt] =>
  LinkedElemtnt.normalizeURI()
  -> [URI]
