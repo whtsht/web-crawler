@@ -1,0 +1,48 @@
+ Phase 1 downloadContent stream uri -> stream doc
+ [URI] =>
+ if uri is content
+ - saveFile(content)
+ -> [Document]
+
+ Phase 2 extractLinkedElement stream doc -> stream LinkedElemtnt
+ [Document] -> [LinkedElemtnt]
+
+ Phase 3 rewriteLinkedElement stream -> LinkedElemtnt -> stream uri
+ [LinkedElemtnt] =>
+ LinkedElemtnt.normalizeURI()
+ -> [URI]
+
+ Phase 4 saveDocuments stream doc -> ()
+ [Document] => saveFile(doc)
+
+crawlingWithDepth
+iterate 0:depth 
+    var docs = (1)(uri)
+    uri  = (2->3)(docs)
+    saveDocuments(docs)
+
+var docs = (1)(uri)
+saveDocuments(docs)
+
+Behavior
+- depth = 1:
+    Level 1:
+        HTML     : Downloaded
+        Contents : Downloaded
+    Level 2:
+        HTML     : Downloaded but hyperlinks are maybe broken
+        Contents : Not Downloaded
+
+- depth = 2:
+    Level 1:
+        HTML     : Downloaded
+        Contents : Downloaded
+    Level 2:
+        HTML     : Downloaded
+        Contents : Downloaded
+    Level 3:
+        HTML     : Downloaded but hyperlinks are maybe broken
+        Contents : Not Downloaded
+
+- depth = 3:
+...
