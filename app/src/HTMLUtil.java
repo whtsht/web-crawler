@@ -1,7 +1,6 @@
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
-import java.util.Optional;
 import java.util.function.Function;
 import org.jsoup.Jsoup;
 import io.vavr.collection.List;
@@ -22,14 +21,8 @@ public class HTMLUtil {
         return content.map(response -> isHtml(response)).getOrElse(false);
     }
 
-    public static Try<Optional<HTML>> parseHtml(HttpResponse<InputStream> response, URI baseUri) {
-        return Try.of(() -> {
-            if (HTMLUtil.isHtml(response)) {
-                return Optional.of(new HTML(Jsoup.parse(response.body(), null, baseUri.toString()), baseUri));
-            } else {
-                return Optional.empty();
-            }
-        });
+    public static Try<HTML> parseHtml(HttpResponse<InputStream> response, URI srcUri, URI baseUri) {
+        return Try.of(() -> new HTML(Jsoup.parse(response.body(), null, baseUri.toString()), srcUri, baseUri));
     }
 
     public static Function<URI, String> hyperLink(URI srcUri) {

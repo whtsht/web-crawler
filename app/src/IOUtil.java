@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.io.File;
 import io.vavr.control.Try;
 
 public class IOUtil {
@@ -20,7 +21,9 @@ public class IOUtil {
 
     public static Try<Void> saveFile(String input, String path) {
         return Try.of(() -> {
-            try (var outputStream = new PrintWriter(path)) {
+            var file = new File(path);
+            file.getParentFile().mkdirs();
+            try (var outputStream = new PrintWriter(file)) {
                 outputStream.print(input);
                 return null;
             }
@@ -29,7 +32,9 @@ public class IOUtil {
 
     public static Try<Void> saveFile(InputStream input, String path) {
         return Try.of(() -> {
-            try (var outputStream = new PrintWriter(path)) {
+            var file = new File(path);
+            file.getParentFile().mkdirs();
+            try (var outputStream = new PrintWriter(file)) {
                 outputStream.print(input);
                 return null;
             }
