@@ -10,10 +10,10 @@ import io.vavr.control.Try;
 public class IOUtil {
     public static final Duration HTTP_REQUEST_TIMEOUT = Duration.ofSeconds(5);
 
-    public static Try<HttpResponse<InputStream>> downloadContent(String uri) {
+    public static Try<HttpResponse<InputStream>> downloadContent(URI uri) {
         return Try.of(() -> {
             final var client = HttpClient.newHttpClient();
-            final var request = HttpRequest.newBuilder().uri(new URI(uri)).GET().timeout(HTTP_REQUEST_TIMEOUT).build();
+            final var request = HttpRequest.newBuilder().uri(uri).GET().timeout(HTTP_REQUEST_TIMEOUT).build();
             return client.send(request, HttpResponse.BodyHandlers.ofInputStream());
         });
     }

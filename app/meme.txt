@@ -1,15 +1,17 @@
+ HTML = { baseURI, Document }
+
  Phase 1 downloadContent stream uri -> list doc
  [URI] =>
  if uri is content
  - saveFile(content)
- -> [Document]
+ -> [HTML]
 
- Phase 2 extractLinkedElement stream doc -> stream LinkedElemtnt
- [Document] -> [LinkedElemtnt]
+ Phase 2 extractLinkedElement stream HTML -> stream LinkedElement
+ [Document] -> [LinkedElement]
 
- Phase 3 rewriteLinkedElement stream LinkedElemtnt -> stream uri
- [LinkedElemtnt] =>
- LinkedElemtnt.normalizeURI()
+ Phase 3 rewriteLinkedElement stream LinkedElement -> stream uri
+ [LinkedElement] =>
+ LinkedElement.applyNewUri(baseUri)
  -> [URI]
 
  Phase 4 saveDocuments stream doc -> ()

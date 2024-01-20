@@ -1,9 +1,10 @@
 import java.io.InputStream;
+import java.net.URI;
 import java.net.http.HttpResponse;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.function.Function;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import io.vavr.collection.List;
 import io.vavr.control.Try;
 
 public class HTMLUtil {
@@ -16,23 +17,27 @@ public class HTMLUtil {
         }
     }
 
-    public static Try<Optional<Document>> parseHtml(HttpResponse<InputStream> response, String baseUri) {
+    public static boolean isHtml(URI uri) {
+        final var content = IOUtil.downloadContent(uri);
+        return content.map(response -> isHtml(response)).getOrElse(false);
+    }
+
+    public static Try<Optional<HTML>> parseHtml(HttpResponse<InputStream> response, URI baseUri) {
         return Try.of(() -> {
             if (HTMLUtil.isHtml(response)) {
-                return Optional.of(Jsoup.parse(response.body(), null, baseUri));
+                final var document = Jsoup.parse(response.body(), null, baseUri.toString());
+                return Optional.of(new HTML(document, baseUri));
             } else {
                 return Optional.empty();
             }
         });
     }
 
-    public static Stream<LinkedElement> extractSrc(Document doc) {
-        var sources = doc.select("[src]");
-        return sources.stream().map(source -> new LinkedElement("src", source));
-    }
-
-    public static Stream<LinkedElement> extractHref(Document doc) {
-        var links = doc.select("[href]");
-        return links.stream().map(link -> new LinkedElement("href", link));
+    public static Function<HTML, List<URI>> replaceUri(String attributeName, Function<URI, URI> replaceFunction) {
+        return html -> {
+            return List.ofAll(html.document.select("[" + attributeName + "]"))
+                    .flatMap(LinkedElement.of(attributeName))
+                    .map(elem -> elem.applyNewUri(html.baseUri, replaceFunction));
+        };
     }
 }

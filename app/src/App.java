@@ -1,18 +1,18 @@
+import java.net.URI;
+import java.util.Arrays;
+
+import org.jsoup.Jsoup;
+
 import io.vavr.collection.List;
-import io.vavr.control.Try;
 
 public class App {
     public static final void main(String[] args) throws Exception {
-        var a = List.of(Try.of(() -> af()), Try.of(() -> a()), Try.of(() -> a()));
-        var am = a.filter(e -> e.isFailure()).map(e -> e);
-        System.out.println(am);
-    }
 
-    private static String a() {
-        return "a";
-    }
+        var html = new HTML(Jsoup.parse("<h1>extract src attribute example</h1><a src=\"/a/b/c/index.html\"></a>"),
+                new URI("http://example.com/"));
+        var uriList = HTMLUtil.replaceUri("src", e -> e).apply(html);
+        System.out.println(uriList);
+        System.out.println(html.document);
 
-    private static String af() {
-        throw new RuntimeException("a");
     }
 }
