@@ -1,67 +1,42 @@
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
 import java.util.Optional;
 
 public class URIUtil {
-    // html:
-    // filename: resources/<baseuri>/index.html
-    // uri : ..{depth(<source_baseuri>)}/resources/<target_baseuri>/index.html
-    // content: resources/<baseuri>/filename
-    // uri : ..{depth(<source_baseuri>)}/resources/<target_baseuri>/filename
     public static int getUriDepth(URI uri) {
-        return 0;
+        return (uri.getPath() + " ").split("/").length;
     }
 
     public static String htmlUriToFilename(URI uri) {
-        return uri.toString();
+        if (uri.getPath().endsWith(".html")) {
+            return "resources/" + uri.getHost() + uri.getPath();
+        } else {
+            return "resources/" + uri.getHost() + uri.getPath() + "index.html";
+        }
     }
 
     public static String contentUriToFilename(URI uri) {
-        return uri.toString();
+        return "resources/" + uri.getHost() + uri.getPath();
     }
 
-    public static String htmlUriToLink(URI uri) {
-        return uri.toString();
+    public static String htmlUriToLink(URI srcUri, URI dstUri) {
+        return "../".repeat(getUriDepth(srcUri) + 1) + htmlUriToFilename(dstUri);
     }
 
-    public static String contentUriToLink(URI uri) {
-        return uri.toString();
+    public static String contentUriToLink(URI srcUri, URI dstUri) {
+        return "../".repeat(getUriDepth(srcUri) + 1) + contentUriToFilename(dstUri);
     }
 
     public static Optional<URI> getBaseUri(URI uri) {
         try {
-            final var scheme = uri.getScheme();
-            final var host = uri.getHost();
-            if (Objects.nonNull(scheme) && Objects.nonNull(host)) {
-                return Optional.of(new URI(scheme.toString() + "://" + host.toString() + "/"));
-            }
-        } catch (URISyntaxException ex) {
+            return Optional.of(
+                    new URI(uri.getScheme().toString() + "://" + uri.getAuthority().toString() + "/"));
+        } catch (URISyntaxException | NullPointerException ex) {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
-    public static Optional<URI> uriNormalization(URI baseUri, URI uri) {
-        var uri_ = uri.toString();
-        if (uri_.contains(":")) {
-            // Absolute URI
-            return Optional.of(uri);
-        }
-
-        if (uri_.length() >= 2 && uri_.substring(0, 2).equals("//")) {
-            try {
-                return Optional.of(new URI(baseUri.getScheme() + "://" + uri_.substring(2)));
-            } catch (URISyntaxException ex) {
-            }
-        }
-
-        if (uri_.length() >= 1 && uri_.substring(0, 1).equals("/")) {
-            try {
-                return Optional.of(new URI(baseUri + uri_.substring(1)));
-            } catch (URISyntaxException ex) {
-            }
-        }
-
-        return Optional.empty();
+    public static URI absolute(URI baseUri, URI uri) {
+        return baseUri.resolve(uri.normalize());
     }
 }
