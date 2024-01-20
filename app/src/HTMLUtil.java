@@ -25,15 +25,20 @@ public class HTMLUtil {
     public static Try<Optional<HTML>> parseHtml(HttpResponse<InputStream> response, URI baseUri) {
         return Try.of(() -> {
             if (HTMLUtil.isHtml(response)) {
-                final var document = Jsoup.parse(response.body(), null, baseUri.toString());
-                return Optional.of(new HTML(document, baseUri));
+                return Optional.of(new HTML(Jsoup.parse(response.body(), null, baseUri.toString()), baseUri));
             } else {
                 return Optional.empty();
             }
         });
     }
 
-    public static Function<HTML, List<URI>> replaceUri(String attributeName, Function<URI, URI> replaceFunction) {
+    public static Function<URI, String> hyperLink(URI srcUri) {
+        return dstUri -> isHtml(dstUri)
+                ? URIUtil.htmlUriToLink(srcUri, dstUri)
+                : URIUtil.contentUriToLink(srcUri, dstUri);
+    }
+
+    public static Function<HTML, List<URI>> replaceUri(String attributeName, Function<URI, String> replaceFunction) {
         return html -> {
             return List.ofAll(html.document.select("[" + attributeName + "]"))
                     .flatMap(LinkedElement.of(attributeName))

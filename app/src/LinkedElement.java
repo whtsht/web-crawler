@@ -18,11 +18,11 @@ public class LinkedElement {
         return elem -> Try.of(() -> new LinkedElement(new URI(elem.attr(attrName)), elem, attrName));
     }
 
-    public void rewriteURI(URI uri) {
-        elem.attr(attrName, uri.toString());
+    public void rewriteURI(String path) {
+        elem.attr(attrName, path);
     }
 
-    public URI applyNewUri(URI baseUri, Function<URI, URI> replaceFunction) {
+    public URI applyNewUri(URI baseUri, Function<URI, String> replaceFunction) {
         final var newUri = URIUtil.absolute(baseUri, uri);
         rewriteURI(replaceFunction.apply(newUri));
         return newUri;
