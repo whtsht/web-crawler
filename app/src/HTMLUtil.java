@@ -1,10 +1,10 @@
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import io.vavr.control.Try;
 
 public class HTMLUtil {
     public static boolean isHtml(HttpResponse<InputStream> response) {
@@ -16,14 +16,14 @@ public class HTMLUtil {
         }
     }
 
-    public static Optional<Document> parseHtml(HttpResponse<InputStream> response, String baseUri) {
-        if (HTMLUtil.isHtml(response)) {
-            try {
+    public static Try<Optional<Document>> parseHtml(HttpResponse<InputStream> response, String baseUri) {
+        return Try.of(() -> {
+            if (HTMLUtil.isHtml(response)) {
                 return Optional.of(Jsoup.parse(response.body(), null, baseUri));
-            } catch (IOException ex) {
+            } else {
+                return Optional.empty();
             }
-        }
-        return Optional.empty();
+        });
     }
 
     public static Stream<LinkedElement> extractSrc(Document doc) {

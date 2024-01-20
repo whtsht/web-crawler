@@ -2,33 +2,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.net.http.HttpResponse;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
+
+import io.vavr.control.Try;
 
 class IOUtilTest {
     @Test
     void downloadValidUri() {
-        Optional<HttpResponse<InputStream>> response;
+        Try<HttpResponse<InputStream>> response;
         response = IOUtil.downloadContent("https://www.yahoo.co.jp/");
-        assertEquals(response.isPresent(), true);
+        assertTrue(response.isSuccess());
 
         response = IOUtil.downloadContent("https://www.youtube.com/");
-        assertEquals(response.isPresent(), true);
+        assertTrue(response.isSuccess());
 
         response = IOUtil.downloadContent("https://github.com");
-        assertEquals(response.isPresent(), true);
+        assertTrue(response.isSuccess());
     }
 
     @Test
     void downloadInvalidUri() {
-        Optional<HttpResponse<InputStream>> response;
+        Try<HttpResponse<InputStream>> response;
         response = IOUtil.downloadContent("htts://www.yahoo.co.jp/");
-        assertEquals(response.isPresent(), false);
+        assertTrue(response.isFailure());
 
         response = IOUtil.downloadContent("https://unknown.unknown");
-        assertEquals(response.isPresent(), false);
+        assertTrue(response.isFailure());
 
         response = IOUtil.downloadContent("");
-        assertEquals(response.isPresent(), false);
+        assertTrue(response.isFailure());
     }
 }

@@ -1,6 +1,5 @@
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
+import io.vavr.control.Try;
 
 public class URIUtil {
     public static int getUriDepth(URI uri) {
@@ -27,13 +26,8 @@ public class URIUtil {
         return "../".repeat(getUriDepth(srcUri) + 1) + contentUriToFilename(dstUri);
     }
 
-    public static Optional<URI> getBaseUri(URI uri) {
-        try {
-            return Optional.of(
-                    new URI(uri.getScheme().toString() + "://" + uri.getAuthority().toString() + "/"));
-        } catch (URISyntaxException | NullPointerException ex) {
-            return Optional.empty();
-        }
+    public static Try<URI> getBaseUri(URI uri) {
+        return Try.of(() -> new URI(uri.getScheme().toString() + "://" + uri.getAuthority().toString() + "/"));
     }
 
     public static URI absolute(URI baseUri, URI uri) {
