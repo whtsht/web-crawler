@@ -29,7 +29,7 @@ class CrawlerTest {
         var uri = new URI("https://www.yahoo.co.jp/");
         var response = IOUtil.downloadContent(uri).get();
         var html = Crawler.pullContents(response, uri, URIUtil.getBaseUri(uri).get());
-        assertTrue(html.isPresent());
+        assertTrue(html.isDefined());
 
         uri = new URI("https://www.w3schools.com/tags/img_girl.jpg");
         response = IOUtil.downloadContent(uri).get();

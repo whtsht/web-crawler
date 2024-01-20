@@ -9,35 +9,35 @@ import java.io.File;
 import io.vavr.control.Try;
 
 public class IOUtil {
-    public static final Duration HTTP_REQUEST_TIMEOUT = Duration.ofSeconds(5);
+    public static final Duration HTTP_REQUEST_TIMEOUT = Duration.ofSeconds(3);
+
+    public static class Content {
+        private Object input;
+        private String path;
+
+        public Content(Object input, String path) {
+            this.input = input;
+            this.path = path;
+        }
+
+    }
+
+    public static Try<Void> saveFile(Content content) {
+        return Try.of(() -> {
+            var file = new File(content.path);
+            file.getParentFile().mkdirs();
+            try (var outputStream = new PrintWriter(file)) {
+                outputStream.print(content.input);
+                return null;
+            }
+        });
+    }
 
     public static Try<HttpResponse<InputStream>> downloadContent(URI uri) {
         return Try.of(() -> {
             final var client = HttpClient.newHttpClient();
             final var request = HttpRequest.newBuilder().uri(uri).GET().timeout(HTTP_REQUEST_TIMEOUT).build();
             return client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-        });
-    }
-
-    public static Try<Void> saveFile(String input, String path) {
-        return Try.of(() -> {
-            var file = new File(path);
-            file.getParentFile().mkdirs();
-            try (var outputStream = new PrintWriter(file)) {
-                outputStream.print(input);
-                return null;
-            }
-        });
-    }
-
-    public static Try<Void> saveFile(InputStream input, String path) {
-        return Try.of(() -> {
-            var file = new File(path);
-            file.getParentFile().mkdirs();
-            try (var outputStream = new PrintWriter(file)) {
-                outputStream.print(input);
-                return null;
-            }
         });
     }
 }
