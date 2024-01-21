@@ -12,7 +12,7 @@ class URIUtilTest {
         var uri = new URI("https://stackoverflow.com/jobs/companies");
 
         var baseUri = URIUtil.getBaseUri(uri);
-        assertEquals(baseUri, Try.of(() -> new URI("https://stackoverflow.com/")));
+        assertEquals(baseUri, Try.of(() -> new URI("https://stackoverflow.com")));
 
         URI absoluteUri;
         absoluteUri = URIUtil.absolute(baseUri.get(), new URI("/users"));
@@ -29,7 +29,7 @@ class URIUtilTest {
     void getBaseUri() throws URISyntaxException {
         assertEquals(
                 URIUtil.getBaseUri(new URI("https://datatracker.ietf.org/doc/html/rfc3986#section-4.2")),
-                Try.of(() -> new URI("https://datatracker.ietf.org/")));
+                Try.of(() -> new URI("https://datatracker.ietf.org")));
         assertTrue(URIUtil.getBaseUri(new URI("/doc/html/rfc3986#section-4.2")).isFailure());
         assertTrue(URIUtil.getBaseUri(new URI("//datatracker.ietf.org")).isFailure());
     }
@@ -81,5 +81,13 @@ class URIUtilTest {
         ;
         assertEquals(URIUtil.htmlUriToFilename(new URI("https://www.ikyu.com/?ikCo=ik010002&sc_e=ytc_pc_ikyu")),
                 "resources/www.ikyu.com/index.html");
+    }
+
+    @Test
+    void withFragment() throws URISyntaxException {
+        assertEquals(
+                URIUtil.normalize(new URI("https://www.yahoo.co.jp/#wrapper")).get(),
+                new URI("https://www.yahoo.co.jp/"));
+        ;
     }
 }

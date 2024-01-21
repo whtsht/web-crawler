@@ -29,7 +29,7 @@ public class URIUtil {
     }
 
     public static Try<URI> getBaseUri(URI uri) {
-        return Try.of(() -> new URI(uri.getScheme().toString() + "://" + uri.getAuthority().toString() + "/"));
+        return Try.of(() -> new URI(uri.getScheme().toString() + "://" + uri.getAuthority().toString()));
     }
 
     public static URI absolute(URI baseUri, URI uri) {
@@ -37,8 +37,10 @@ public class URIUtil {
     }
 
     public static Try<URI> normalize(URI uri) {
+
         return Try.of(() -> {
-            return uri.getPath().length() == 0 ? new URI(uri.toString() + "/") : uri;
+            var uri_ = new URI(getBaseUri(uri).get() + uri.getPath());
+            return uri_.getPath().length() == 0 ? new URI(uri_.toString() + "/") : uri_;
         });
     }
 }

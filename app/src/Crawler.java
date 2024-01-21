@@ -82,7 +82,6 @@ public class Crawler {
                     .map(URIUtil::normalize).flatMap(Function.identity())
                     .filter(uri_ -> !uriSet.contains(uri_));
             uriSet.addAll(newUriList.toJavaList());
-            System.out.println(newUriList);
             uriList = newUriList;
         }
         crawlingOneStepWithoutNext(uriList);
