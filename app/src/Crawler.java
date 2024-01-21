@@ -28,8 +28,8 @@ public class Crawler {
     }
 
     public static void saveDocument(HTML html) {
-        IOUtil.saveFile(
-                new IOUtil.Content(html.document.outerHtml(), URIUtil.htmlUriToFilename(html.baseUri)));
+        IOUtil.saveFile(IOUtil.Content.of(html.document.outerHtml(),
+                URIUtil.htmlUriToFilename(html.baseUri)));
     }
 
     private static <L, R> List<L> getLeft(List<Either<L, R>> list) {

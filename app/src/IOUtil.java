@@ -1,35 +1,50 @@
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import io.vavr.control.Try;
 
 public class IOUtil {
     public static final Duration HTTP_REQUEST_TIMEOUT = Duration.ofSeconds(3);
 
     public static class Content {
-        private Object input;
+        private InputStream input;
         private String path;
 
-        public Content(Object input, String path) {
+        public Content(InputStream input, String path) {
             this.input = input;
             this.path = path;
         }
 
+        public static Content of(InputStream input, String path) {
+            return new Content(input, path);
+        }
+
+        public static Content of(String input, String path) {
+            return new Content(new ByteArrayInputStream(input.getBytes()), path);
+        }
     }
 
     public static Try<Void> saveFile(Content content) {
         return Try.of(() -> {
             var file = new File(content.path);
             file.getParentFile().mkdirs();
-            try (var outputStream = new PrintWriter(file)) {
-                outputStream.print(content.input);
-                return null;
+
+            try (var outputStream = new FileOutputStream(file)) {
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = content.input.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
             }
+            return null;
         });
     }
 
