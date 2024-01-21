@@ -42,6 +42,10 @@ public class IOUtil {
     }
 
     public static void deleteDirectory(File directory) {
+        final var listFiles = directory.listFiles();
+        if (listFiles == null)
+            return;
+
         for (File file : directory.listFiles()) {
             if (file.isDirectory()) {
                 deleteDirectory(file);

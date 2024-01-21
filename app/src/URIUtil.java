@@ -1,4 +1,5 @@
 import java.net.URI;
+
 import io.vavr.control.Try;
 
 public class URIUtil {
@@ -32,5 +33,12 @@ public class URIUtil {
 
     public static URI absolute(URI baseUri, URI uri) {
         return baseUri.resolve(uri.normalize());
+    }
+
+    public static Try<URI> normalize(URI uri) {
+        return Try.of(() -> {
+            var uri_ = uri.normalize();
+            return uri_.getPath().length() == 0 ? new URI(uri_.toString() + "/") : uri_;
+        });
     }
 }

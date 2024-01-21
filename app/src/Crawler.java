@@ -7,6 +7,8 @@ import io.vavr.control.Option;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.util.function.Function;
+import java.util.HashSet;
+import java.util.Arrays;
 
 public class Crawler {
     public static Option<Either<HTML, IOUtil.Content>> pullContents(HttpResponse<InputStream> response, URI uri,
@@ -71,9 +73,18 @@ public class Crawler {
     }
 
     public static void crawlingWithDepth(int depth, URI uri) {
+        uri = URIUtil.normalize(uri).get();
         var uriList = List.of(uri);
+        final var uriSet = new HashSet<URI>(Arrays.asList(uri));
+        uriSet.add(uri);
+
         for (int i = 0; i < depth; i++) {
-            uriList = crawlingOneStep(uriList);
+            final var newUriList = crawlingOneStep(uriList)
+                    .map(URIUtil::normalize).flatMap(Function.identity())
+                    .filter(uri_ -> !uriSet.contains(uri_));
+            uriSet.addAll(newUriList.toJavaList());
+            System.out.println(newUriList);
+            uriList = newUriList;
         }
         crawlingOneStepWithoutNext(uriList);
     }
