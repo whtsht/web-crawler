@@ -9,19 +9,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 class CrawlerTest {
-    public static void deleteDirectory(File directory) {
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory()) {
-                deleteDirectory(file);
-            }
-            file.delete();
-        }
-        directory.delete();
-    }
 
     @AfterAll
     static void cleanUp() throws IOException {
-        deleteDirectory(new File("resources"));
+        IOUtil.deleteDirectory(new File("resources"));
     }
 
     @Test

@@ -40,4 +40,14 @@ public class IOUtil {
             return client.send(request, HttpResponse.BodyHandlers.ofInputStream());
         });
     }
+
+    public static void deleteDirectory(File directory) {
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory()) {
+                deleteDirectory(file);
+            }
+            file.delete();
+        }
+        directory.delete();
+    }
 }

@@ -1,7 +1,9 @@
-import java.net.URI;;
+import java.io.File;
+import java.net.URI;
 
 public class App {
     public static final void main(String[] args) throws Exception {
-        Crawler.crawlingWithDepth(1, new URI("https://stackoverflow.com/"));
+        IOUtil.deleteDirectory(new File("resources"));
+        Crawler.crawlingWithDepth(1, new URI("https://www.yahoo.co.jp/"));
     }
 }
