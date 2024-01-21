@@ -59,16 +59,27 @@ class URIUtilTest {
     void toLink() throws URISyntaxException {
         assertEquals(
                 URIUtil.htmlUriToLink(new URI("https://a/"), new URI("https://b/")),
-                "../../../resources/b/index.html");
+                "../../resources/b/index.html");
         assertEquals(
                 URIUtil.htmlUriToLink(new URI("https://a/"), new URI("https://b/sub.html")),
-                "../../../resources/b/sub.html");
+                "../../resources/b/sub.html");
         assertEquals(
                 URIUtil.contentUriToLink(new URI("https://a/"), new URI("https://a/b/c/script.js")),
-                "../../../resources/a/b/c/script.js");
+                "../../resources/a/b/c/script.js");
         assertEquals(
                 URIUtil.contentUriToLink(
                         new URI("https://a/b/index.html"), new URI("https://a/b/c/script.js")),
-                "../../../../resources/a/b/c/script.js");
+                "../../../resources/a/b/c/script.js");
+    }
+
+    @Test
+    void withParameter() throws URISyntaxException {
+        assertEquals(
+                URIUtil.htmlUriToLink(new URI("https://www.yahoo.co.jp/"),
+                        new URI("https://www.ikyu.com/?ikCo=ik010002&sc_e=ytc_pc_ikyu")),
+                "../../resources/www.ikyu.com/index.html");
+        ;
+        assertEquals(URIUtil.htmlUriToFilename(new URI("https://www.ikyu.com/?ikCo=ik010002&sc_e=ytc_pc_ikyu")),
+                "resources/www.ikyu.com/index.html");
     }
 }

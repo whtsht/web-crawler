@@ -8,10 +8,11 @@ public class URIUtil {
     }
 
     public static String htmlUriToFilename(URI uri) {
+        var path = "resources/" + uri.getHost() + uri.getPath();
         if (uri.getPath().endsWith(".html")) {
-            return "resources/" + uri.getHost() + uri.getPath();
+            return path;
         } else {
-            return "resources/" + uri.getHost() + uri.getPath() + "index.html";
+            return path.endsWith("/") ? path + "index.html" : path + "/index.html";
         }
     }
 
@@ -20,11 +21,11 @@ public class URIUtil {
     }
 
     public static String htmlUriToLink(URI srcUri, URI dstUri) {
-        return "../".repeat(getUriDepth(srcUri) + 1) + htmlUriToFilename(dstUri);
+        return "../".repeat(getUriDepth(srcUri)) + htmlUriToFilename(dstUri);
     }
 
     public static String contentUriToLink(URI srcUri, URI dstUri) {
-        return "../".repeat(getUriDepth(srcUri) + 1) + contentUriToFilename(dstUri);
+        return "../".repeat(getUriDepth(srcUri)) + contentUriToFilename(dstUri);
     }
 
     public static Try<URI> getBaseUri(URI uri) {
@@ -37,8 +38,7 @@ public class URIUtil {
 
     public static Try<URI> normalize(URI uri) {
         return Try.of(() -> {
-            var uri_ = uri.normalize();
-            return uri_.getPath().length() == 0 ? new URI(uri_.toString() + "/") : uri_;
+            return uri.getPath().length() == 0 ? new URI(uri.toString() + "/") : uri;
         });
     }
 }

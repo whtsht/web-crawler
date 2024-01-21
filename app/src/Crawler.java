@@ -29,7 +29,7 @@ public class Crawler {
 
     public static void saveDocument(HTML html) {
         IOUtil.saveFile(IOUtil.Content.of(html.document.outerHtml(),
-                URIUtil.htmlUriToFilename(html.baseUri)));
+                URIUtil.htmlUriToFilename(html.srcUri)));
     }
 
     private static <L, R> List<L> getLeft(List<Either<L, R>> list) {
@@ -63,7 +63,6 @@ public class Crawler {
                         response -> URIUtil.getBaseUri(uri).map(
                                 baseUri -> pullContents(response, uri, baseUri))))
                 .flatMap(Option::toStream);
-        System.out.println(contents.length());
 
         List<HTML> htmlList = getLeft(contents);
         List<IOUtil.Content> contentList = getRight(contents);

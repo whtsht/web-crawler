@@ -19,17 +19,22 @@ class HTMLUtilTest {
         }
 
         @Test
+        void isHtml() throws URISyntaxException {
+                assertTrue(HTMLUtil.isHtml(new URI("https://www.ikyu.com/?ikCo=ik010002&sc_e=ytc_pc_ikyu")));
+        }
+
+        @Test
         void hyperLink() throws URISyntaxException {
                 assertEquals(HTMLUtil.hyperLink(new URI("https://www.yahoo.co.jp/"))
                                 .apply(new URI("https://example.com/")),
-                                "../../../resources/example.com/index.html");
+                                "../../resources/example.com/index.html");
                 assertEquals(
                                 HTMLUtil.hyperLink(new URI("https://www.yahoo.co.jp/"))
                                                 .apply(new URI("https://example.com/index.html")),
-                                "../../../resources/example.com/index.html");
+                                "../../resources/example.com/index.html");
                 assertEquals(
                                 HTMLUtil.hyperLink(new URI("https://www.yahoo.co.jp/a/b/index.html"))
                                                 .apply(new URI("https://s.yimg.jp/images/kaleido/edit/202310/1/3x3ucu1NQTyH9sCmYHnyTw.jpg")),
-                                "../../../../../resources/s.yimg.jp/images/kaleido/edit/202310/1/3x3ucu1NQTyH9sCmYHnyTw.jpg");
+                                "../../../../resources/s.yimg.jp/images/kaleido/edit/202310/1/3x3ucu1NQTyH9sCmYHnyTw.jpg");
         }
 }
