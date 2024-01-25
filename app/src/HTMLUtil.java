@@ -38,8 +38,10 @@ public class HTMLUtil {
     }
 
     public static boolean isHtml(URI uri) {
-        final var content = IOUtil.downloadContent(uri);
-        return content.map(response -> isHtml(response)).getOrElse(false);
+        var components = List.of(uri.getPath().split("/"));
+        return components.filter(component -> component.contains(".")).length() == 0
+                || !components.last().contains(".")
+                || components.last().contains(".html");
     }
 
     public static Try<HTML> parseHtml(HttpResponse<InputStream> response, URI srcUri, URI baseUri) {

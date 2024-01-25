@@ -51,19 +51,14 @@ public class Crawler {
     public static List<URI> crawlingOneStep(List<URI> uriList) {
         final var contents = getContents(uriList);
 
-        System.out.println("contents " + contents.length());
-
         final var htmlList = getLeft(contents);
         final var contentList = getRight(contents);
-        System.out.println("ok");
 
         contentList.forEach(IOUtil::saveFile);
 
-        System.out.println("ok");
         final var newUriList = htmlList.flatMap(Crawler::replaceUri);
-        System.out.println("ok");
         htmlList.forEach(Crawler::saveDocument);
-        System.out.println("ok");
+
         return newUriList;
     }
 

@@ -21,6 +21,13 @@ class HTMLUtilTest {
         @Test
         void isHtml() throws URISyntaxException {
                 assertTrue(HTMLUtil.isHtml(new URI("https://www.ikyu.com/?ikCo=ik010002&sc_e=ytc_pc_ikyu")));
+                assertTrue(HTMLUtil.isHtml(new URI("https://www.yahoo.co.jp/")));
+                assertTrue(HTMLUtil.isHtml(new URI("https://www.yahoo.co.jp")));
+                assertTrue(HTMLUtil.isHtml(new URI("https://www.yahoo.co.jp/index.html")));
+                assertTrue(HTMLUtil.isHtml(new URI(
+                                "https://app.adjust.com/1kmi1m2?redirect=https%3A%2F%2Fpaypayfleamarket.yahoo.co.jp%2F%3Fcpt_s%3Dytopmedia%26cpt_m%3Dkotei%26cpt_n%3Dcontent%26cpt_c%3Dytopmedia")));
+                assertFalse(HTMLUtil.isHtml(new URI("https://www.yahoo.co.jp/script.js")));
+                assertFalse(HTMLUtil.isHtml(new URI("https://www.yahoo.co.jp/a/b/c/image.png")));
         }
 
         @Test
