@@ -40,15 +40,19 @@ public class Crawler {
         return list.filter(Either::isRight).map(elem -> elem.right().get());
     }
 
-    public static List<URI> crawlingOneStep(List<URI> uriList) {
-        final var contents = uriList.flatMap(
+    public static List<Either<HTML, IOUtil.Content>> getContents(List<URI> uriList) {
+        return uriList.flatMap(
                 uri -> IOUtil.downloadContent(uri).flatMap(
                         response -> URIUtil.getBaseUri(uri).map(
                                 baseUri -> pullContents(response, uri, baseUri))))
                 .flatMap(Option::toStream);
+    }
 
-        List<HTML> htmlList = getLeft(contents);
-        List<IOUtil.Content> contentList = getRight(contents);
+    public static List<URI> crawlingOneStep(List<URI> uriList) {
+        final var contents = getContents(uriList);
+
+        final var htmlList = getLeft(contents);
+        final var contentList = getRight(contents);
 
         contentList.forEach(IOUtil::saveFile);
 
@@ -58,14 +62,10 @@ public class Crawler {
     }
 
     public static void crawlingOneStepWithoutNext(List<URI> uriList) {
-        final var contents = uriList.flatMap(
-                uri -> IOUtil.downloadContent(uri).flatMap(
-                        response -> URIUtil.getBaseUri(uri).map(
-                                baseUri -> pullContents(response, uri, baseUri))))
-                .flatMap(Option::toStream);
+        final var contents = getContents(uriList);
 
-        List<HTML> htmlList = getLeft(contents);
-        List<IOUtil.Content> contentList = getRight(contents);
+        final var htmlList = getLeft(contents);
+        final var contentList = getRight(contents);
 
         contentList.forEach(IOUtil::saveFile);
         htmlList.forEach(Crawler::saveDocument);
