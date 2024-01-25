@@ -41,23 +41,29 @@ public class Crawler {
     }
 
     public static List<Either<HTML, IOUtil.Content>> getContents(List<URI> uriList) {
-        return uriList.flatMap(
-                uri -> IOUtil.downloadContent(uri).flatMap(
-                        response -> URIUtil.getBaseUri(uri).map(
-                                baseUri -> pullContents(response, uri, baseUri))))
-                .flatMap(Option::toStream);
+        return List.ofAll(uriList.toJavaParallelStream().flatMap(
+                uri -> IOUtil.downloadContent(uri).toJavaParallelStream().flatMap(
+                        response -> URIUtil.getBaseUri(uri).toJavaParallelStream().flatMap(
+                                baseUri -> pullContents(response, uri, baseUri).toJavaParallelStream())))
+                .toList());
     }
 
     public static List<URI> crawlingOneStep(List<URI> uriList) {
         final var contents = getContents(uriList);
 
+        System.out.println("contents " + contents.length());
+
         final var htmlList = getLeft(contents);
         final var contentList = getRight(contents);
+        System.out.println("ok");
 
         contentList.forEach(IOUtil::saveFile);
 
+        System.out.println("ok");
         final var newUriList = htmlList.flatMap(Crawler::replaceUri);
+        System.out.println("ok");
         htmlList.forEach(Crawler::saveDocument);
+        System.out.println("ok");
         return newUriList;
     }
 
