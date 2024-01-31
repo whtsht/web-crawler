@@ -38,6 +38,7 @@ public class HTMLUtil {
     }
 
     public static boolean isHtml(URI uri) {
+        if (uri.getPath() == null) return false;
         var components = List.of(uri.getPath().split("/"));
         return components.filter(component -> component.contains(".")).length() == 0
                 || !components.last().contains(".")
