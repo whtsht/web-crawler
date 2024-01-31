@@ -24,7 +24,7 @@ public class Crawler {
         final Function<String, List<URI>> replaceUriWithAttr = attributeName -> HTMLUtil
                 .replaceUri(attributeName, HTMLUtil.hyperLink(html.srcUri)).apply(html);
 
-        return List.of("src", "href").flatMap(replaceUriWithAttr);
+        return List.of("src", "href", "srcset").flatMap(replaceUriWithAttr);
     }
 
     public static void saveDocument(HTML html) {
