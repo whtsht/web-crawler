@@ -48,3 +48,8 @@ Behavior
 
 - depth = 3:
 ...
+
+
+depth 1 => 2~4s
+depth 2 => 30s
+depth 3 => NAN
