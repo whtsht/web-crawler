@@ -7,6 +7,7 @@ import io.vavr.control.Option;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.util.function.Function;
+
 import java.util.HashSet;
 import java.util.Arrays;
 

@@ -4,7 +4,7 @@ import io.vavr.control.Try;
 
 public class URIUtil {
     public static int getUriDepth(URI uri) {
-        return (uri.getPath() + " ").split("/").length;
+        return (uri.getPath() + " ").split("/").length + 1;
     }
 
     public static String htmlUriToFilename(URI uri) {

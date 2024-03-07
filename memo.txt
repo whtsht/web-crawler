@@ -53,3 +53,21 @@ Behavior
 depth 1 => 2~4s
 depth 2 => 30s
 depth 3 => NAN
+
+
+Change implementation: channel (ArrayBlockingQueue) and Master/Worker model
+
+master   :
+    get new URI from workers.
+    assign new URI to workers.
+ <= channel =>
+worker   :
+    get assigned URI to the master.
+    download contents
+    return new URIs to the master.
+
+Advantages    :
+    control memory usage
+    speed up
+Disadvantages :
+    not knowing how many layers were downloaded
