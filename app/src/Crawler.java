@@ -72,19 +72,22 @@ public class Crawler {
         htmlList.forEach(Crawler::saveDocument);
     }
 
-    public static void crawlingWithDepth(int depth, URI uri) {
-        uri = URIUtil.normalize(uri).get();
-        var uriList = List.of(uri);
-        final var uriSet = new HashSet<URI>(Arrays.asList(uri));
-        uriSet.add(uri);
-
-        for (int i = 0; i < depth; i++) {
-            final var newUriList = crawlingOneStep(uriList)
-                    .map(URIUtil::normalize).flatMap(Function.identity())
-                    .filter(uri_ -> !uriSet.contains(uri_));
-            uriSet.addAll(newUriList.toJavaList());
-            uriList = newUriList;
+    public static List<URI> crawlingWithDepth_(int depth, HashSet<URI> reachedURISet, List<URI> uriList) {
+        if (depth == 0) {
+            return uriList;
         }
-        crawlingOneStepWithoutNext(uriList);
+        final var newUriList = crawlingOneStep(uriList)
+                .map(URIUtil::normalize).flatMap(Function.identity())
+                .filter(uri_ -> !reachedURISet.contains(uri_));
+
+        reachedURISet.addAll(newUriList.toJavaSet());
+
+        return crawlingWithDepth_(depth - 1, reachedURISet, newUriList);
+    }
+
+    public static void crawlingWithDepth(int depth, URI uri) {
+        var uriList = List.of(uri);
+        final var reachedURISet = new HashSet<URI>(Arrays.asList(uri));
+        crawlingWithDepth_(depth, reachedURISet, uriList);
     }
 }
