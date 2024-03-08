@@ -37,7 +37,6 @@ public class URIUtil {
     }
 
     public static Try<URI> normalize(URI uri) {
-
         return Try.of(() -> {
             var uri_ = new URI(getBaseUri(uri).get() + uri.getPath());
             return uri_.getPath().length() == 0 ? new URI(uri_.toString() + "/") : uri_;

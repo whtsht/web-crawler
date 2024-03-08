@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Arrays;
 
 public class Crawler {
-    public static Option<Either<HTML, IOUtil.Content>> pullContents(HttpResponse<InputStream> response, URI uri,
+    private static Option<Either<HTML, IOUtil.Content>> pullContents(HttpResponse<InputStream> response, URI uri,
             URI baseUri) {
         if (HTMLUtil.isHtml(response)) {
             return HTMLUtil.parseHtml(response, uri, baseUri).toOption().map(Either::left);
@@ -20,14 +20,14 @@ public class Crawler {
         }
     }
 
-    public static List<URI> replaceUri(HTML html) {
+    private static List<URI> replaceUri(HTML html) {
         final Function<String, List<URI>> replaceUriWithAttr = attributeName -> HTMLUtil
                 .replaceUri(attributeName, HTMLUtil.hyperLink(html.srcUri)).apply(html);
 
         return List.of("src", "href", "srcset").flatMap(replaceUriWithAttr);
     }
 
-    public static void saveDocument(HTML html) {
+    private static void saveDocument(HTML html) {
         IOUtil.saveFile(IOUtil.Content.of(html.document.outerHtml(),
                 URIUtil.htmlUriToFilename(html.srcUri)));
     }
@@ -40,7 +40,7 @@ public class Crawler {
         return list.filter(Either::isRight).map(elem -> elem.right().get());
     }
 
-    public static List<Either<HTML, IOUtil.Content>> getContents(List<URI> uriList) {
+    private static List<Either<HTML, IOUtil.Content>> getContents(List<URI> uriList) {
         return List.ofAll(uriList.toJavaParallelStream().flatMap(
                 uri -> IOUtil.downloadContent(uri).toJavaParallelStream().flatMap(
                         response -> URIUtil.getBaseUri(uri).toJavaParallelStream().flatMap(
@@ -48,7 +48,7 @@ public class Crawler {
                 .toList());
     }
 
-    public static List<URI> crawlingOneStep(List<URI> uriList) {
+    private static List<URI> crawlingOneStep(List<URI> uriList) {
         final var contents = getContents(uriList);
 
         final var htmlList = getLeft(contents);
@@ -62,17 +62,7 @@ public class Crawler {
         return newUriList;
     }
 
-    public static void crawlingOneStepWithoutNext(List<URI> uriList) {
-        final var contents = getContents(uriList);
-
-        final var htmlList = getLeft(contents);
-        final var contentList = getRight(contents);
-
-        contentList.forEach(IOUtil::saveFile);
-        htmlList.forEach(Crawler::saveDocument);
-    }
-
-    public static List<URI> crawlingWithDepth_(int depth, HashSet<URI> reachedURISet, List<URI> uriList) {
+    private static List<URI> crawlingWithDepth_(int depth, HashSet<URI> reachedURISet, List<URI> uriList) {
         if (depth == 0) {
             return uriList;
         }
